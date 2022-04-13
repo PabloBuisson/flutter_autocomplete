@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Padding(
-              padding: EdgeInsets.symmetric(vertical: 30.0),
+              padding: EdgeInsets.symmetric(vertical: 20.0),
               child: Text(
                 "What is your favorite city ?",
                 textScaleFactor: 1.5,
@@ -64,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Autocomplete<String>(
+              // control the output
               optionsBuilder: (TextEditingValue value) {
                 // When the field is empty
                 if (value.text.isEmpty) {
@@ -74,6 +75,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     .toLowerCase()
                     .contains(value.text.toLowerCase()));
               },
+              // control the UI
+              fieldViewBuilder: (BuildContext context,
+                  TextEditingController fieldTextEditingController,
+                  FocusNode fieldFocusNode,
+                  VoidCallback onFieldSubmitted) {
+                return TextField(
+                  controller: fieldTextEditingController,
+                  focusNode: fieldFocusNode,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _selectedCity != null
+                          ? const Icon(Icons.check_box_rounded)
+                          : null),
+                  style: const TextStyle(fontSize: 18.0),
+                );
+              },
+              // control the selection
               onSelected: (value) {
                 setState(() {
                   _selectedCity = value;
