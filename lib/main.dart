@@ -40,7 +40,6 @@ class MyApp extends StatelessWidget {
             ],
           ),
         ),
-//      home: const MyHomePage(title: 'Flutter Autocomplete Demo'),
       ),
     );
   }
