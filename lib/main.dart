@@ -58,49 +58,92 @@ class _MyHomePageState extends State<MyHomePage> {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 20.0),
               child: Text(
-                "What is your favorite city ?",
+                "What is your favorite city ? (synchronous way)",
                 textScaleFactor: 1.5,
-                textAlign: TextAlign.end,
+                textAlign: TextAlign.start,
               ),
             ),
-            Autocomplete<String>(
-              // control the output
-              optionsBuilder: (TextEditingValue value) {
-                // When the field is empty
-                if (value.text.isEmpty) {
-                  return [];
-                }
-                // The logic to find out which ones should appear
-                return _suggestions.where((suggestion) => suggestion
-                    .toLowerCase()
-                    .contains(value.text.toLowerCase()));
-              },
-              // control the UI
-              fieldViewBuilder: (BuildContext context,
-                  TextEditingController fieldTextEditingController,
-                  FocusNode fieldFocusNode,
-                  VoidCallback onFieldSubmitted) {
-                return TextField(
-                  controller: fieldTextEditingController,
-                  focusNode: fieldFocusNode,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
+            LayoutBuilder(builder: (context, constraints) {
+              return Autocomplete<String>(
+                // control the output
+                optionsBuilder: (TextEditingValue value) {
+                  // When the field is empty
+                  if (value.text.isEmpty) {
+                    setState(() {
+                      // we reset the choice
+                      _selectedCity = null;
+                    });
+                    return [];
+                  }
+                  // The logic to find out which ones should appear
+                  return _suggestions.where((suggestion) => suggestion
+                      .toLowerCase()
+                      .contains(value.text.toLowerCase()));
+                },
+                // display the UI of suggestions
+                optionsViewBuilder: (BuildContext context,
+                    AutocompleteOnSelected<String> onSelected,
+                    Iterable<String> options) {
+                  return Align(
+                    alignment: Alignment.topLeft,
+                    child: Material(
+                      color: Theme.of(context).primaryColorLight,
+                      elevation: 4.0,
+                      // size works, when placed here below the Material widget
+                      child: SizedBox(
+                        // resolve an unfixed bug => https://github.com/flutter/flutter/issues/78746
+                        width: constraints.biggest.width,
+                        child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: options.length,
+                            shrinkWrap: false,
+                            itemBuilder: (BuildContext context, int index) {
+                              final String option = options.elementAt(index);
+                              return InkWell(
+                                onTap: () => {onSelected(option)},
+                                child: ListTile(
+                                  leading: const Icon(Icons.location_city),
+                                  title: Text(
+                                    option,
+                                    style: TextStyle(
+                                        fontWeight: index == 0
+                                            ? FontWeight.bold
+                                            : FontWeight.normal),
+                                  ),
+                                ),
+                              );
+                            }),
                       ),
-                      prefixIcon: const Icon(Icons.search),
-                      suffixIcon: _selectedCity != null
-                          ? const Icon(Icons.check_box_rounded)
-                          : null),
-                  style: const TextStyle(fontSize: 18.0),
-                );
-              },
-              // control the selection
-              onSelected: (value) {
-                setState(() {
-                  _selectedCity = value;
-                });
-              },
-            ),
+                    ),
+                  );
+                },
+                // control the UI
+                fieldViewBuilder: (BuildContext context,
+                    TextEditingController fieldTextEditingController,
+                    FocusNode fieldFocusNode,
+                    VoidCallback onFieldSubmitted) {
+                  return TextField(
+                    controller: fieldTextEditingController,
+                    focusNode: fieldFocusNode,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: _selectedCity != null
+                            ? const Icon(Icons.check_box_rounded)
+                            : null),
+                    style: const TextStyle(fontSize: 18.0),
+                  );
+                },
+                // control the selection
+                onSelected: (value) {
+                  setState(() {
+                    _selectedCity = value;
+                  });
+                },
+              );
+            }),
           ],
         ),
       ),
