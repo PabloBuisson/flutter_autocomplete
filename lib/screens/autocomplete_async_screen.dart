@@ -44,7 +44,7 @@ class _AutocompleteAsyncScreeenState extends State<AutocompleteAsyncScreeen> {
                   return [];
                 }
                 // The logic to find out which ones should appear
-                return await ApiDatamuse.getSuggestions(value.text);
+                return await ApiDatamuse.getSuggestionsName(value.text);
               },
               // display the UI of suggestions
               optionsViewBuilder: (BuildContext context,
@@ -91,6 +91,7 @@ class _AutocompleteAsyncScreeenState extends State<AutocompleteAsyncScreeen> {
                 return TextField(
                   controller: fieldTextEditingController,
                   focusNode: fieldFocusNode,
+                  autofocus: true,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),

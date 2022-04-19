@@ -99,6 +99,7 @@ class _AutocompleteSyncScreenState extends State<AutocompleteSyncScreen> {
                 return TextField(
                   controller: fieldTextEditingController,
                   focusNode: fieldFocusNode,
+                  autofocus: true,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),

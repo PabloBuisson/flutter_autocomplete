@@ -29,7 +29,8 @@ class _AutocompleteAheadScreenState extends State<AutocompleteAheadScreen> {
               textAlign: TextAlign.start,
             ),
           ),
-          TypeAheadField<String>(
+          // what the suggestion will look like ?
+          TypeAheadField<Map<String, String>>(
             // 💡 add a delay to send a request 500ms after last keystroke
             // to prevent excessive amount of requests
             // the duration defaults to 300 milliseconds
@@ -59,17 +60,32 @@ class _AutocompleteAheadScreenState extends State<AutocompleteAheadScreen> {
             noItemsFoundBuilder: (context) => const ListTile(
               title: Text("No item found !"),
             ),
-            itemBuilder: (context, String suggestion) {
+            itemBuilder: (context, Map<String, String> suggestion) {
               return ListTile(
                 leading: const Icon(Icons.star),
-                title: Text(suggestion),
+                title: Text(suggestion['name']!),
               );
             },
-            onSuggestionSelected: (String suggestion) {
+            onSuggestionSelected: (Map<String, String> suggestion) {
               setState(() {
-                _selectedSuggestion = suggestion;
+                _selectedSuggestion = suggestion['name']!;
               });
-              _typeAheadController.text = suggestion;
+              _typeAheadController.text = suggestion['name']!;
+              ScaffoldMessenger.of(context)
+                ..removeCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                  content: ListTile(
+                    textColor: Colors.white,
+                    title: Text(
+                      'Selected : ${suggestion['name']!} [score : ${suggestion['score'] ?? 'unknown'}]',
+                      style: const TextStyle(fontSize: 20.0),
+                    ),
+                    trailing: Icon(
+                      Icons.check_box_rounded,
+                      color: Theme.of(context).primaryColorLight,
+                    ),
+                  ),
+                ));
             },
           ),
         ],
