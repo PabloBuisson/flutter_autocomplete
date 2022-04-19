@@ -5,7 +5,7 @@ import 'package:flutter_autocomplete/models/suggestion_datamuse.dart';
 import 'package:http/http.dart' as http;
 
 class ApiDatamuse {
-  static Future<List<Map<String, String>>> getSuggestions(String query) async {
+  static Future<List<String>> getSuggestions(String query) async {
     if (query.isEmpty && query.length < 3) {
       print('Query needs to be at least 3 chars');
       return Future.value([]);
@@ -24,8 +24,7 @@ class ApiDatamuse {
       print('Request failed with status: ${response.statusCode}.');
     }
 
-    return Future.value(suggestions
-        .map((e) => {'name': e.word, 'score': e.score.toString()})
-        .toList());
+    return Future.value(
+        suggestions.map((suggestion) => suggestion.word).toList());
   }
 }

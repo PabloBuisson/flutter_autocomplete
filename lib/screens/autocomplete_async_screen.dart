@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_autocomplete/services/api_datamuse.dart';
 
 class AutocompleteAsyncScreeen extends StatefulWidget {
   const AutocompleteAsyncScreeen({Key? key}) : super(key: key);
@@ -12,16 +13,8 @@ class _AutocompleteAsyncScreeenState extends State<AutocompleteAsyncScreeen> {
   // This will be displayed below the autocomplete field
   String? _selectedCity;
 
-  // This list holds all the suggestions
-  final List<String> _suggestions = [
-    'Paris',
-    'New-York',
-    'Madrid',
-    'London',
-    'Oslo',
-    'Sydney',
-    'Rio',
-  ];
+  // The list which holds the suggestions is no longer used
+  // List<String> _suggestions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +26,7 @@ class _AutocompleteAsyncScreeenState extends State<AutocompleteAsyncScreeen> {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20.0),
             child: Text(
-              "What is your favorite city ? (asynchronous way)",
+              "What is your favorite item when you travel ? (asynchronous way)",
               textScaleFactor: 1.5,
               textAlign: TextAlign.start,
             ),
@@ -41,9 +34,9 @@ class _AutocompleteAsyncScreeenState extends State<AutocompleteAsyncScreeen> {
           LayoutBuilder(builder: (context, constraints) {
             return Autocomplete<String>(
               // control the output
-              optionsBuilder: (TextEditingValue value) {
+              optionsBuilder: (TextEditingValue value) async {
                 // When the field is empty
-                if (value.text.isEmpty) {
+                if (value.text.isEmpty || value.text.length < 3) {
                   setState(() {
                     // we reset the choice
                     _selectedCity = null;
@@ -51,9 +44,7 @@ class _AutocompleteAsyncScreeenState extends State<AutocompleteAsyncScreeen> {
                   return [];
                 }
                 // The logic to find out which ones should appear
-                return _suggestions.where((suggestion) => suggestion
-                    .toLowerCase()
-                    .contains(value.text.toLowerCase()));
+                return await ApiDatamuse.getSuggestions(value.text);
               },
               // display the UI of suggestions
               optionsViewBuilder: (BuildContext context,
@@ -77,7 +68,7 @@ class _AutocompleteAsyncScreeenState extends State<AutocompleteAsyncScreeen> {
                             return InkWell(
                               onTap: () => {onSelected(option)},
                               child: ListTile(
-                                leading: const Icon(Icons.location_city),
+                                leading: const Icon(Icons.star),
                                 title: Text(
                                   option,
                                   style: TextStyle(
